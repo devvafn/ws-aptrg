@@ -1,0 +1,234 @@
+<html>
+<head>
+    <title>Membuat Parsing data Dari Firebase</title>
+    <script src="bootstrap4/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="bootstrap4/css/bootstrap.min.css"></link>
+    <style>
+    html {
+        position: relative;
+        min-height: 100%;
+        overflow-y: hidden;
+        overflow-x: hidden;
+    }
+    body{
+        background-image: url("img/body1.jpg");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+    }
+    .footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        height: 60px;
+        line-height: 60px; 
+        background-color:white;
+        color: black;
+        padding-top: 15px;
+        opacity: 0.8;
+    }
+    .fontfotter{
+        margin-left: 15px;
+    }
+    </style>
+</head>
+<body>
+    <div class="row">
+        <div class="col-12">
+            <nav class="navbar navbar-expand-sm" style="background-color: white; font-style: italic; opacity: 0.8;" >
+            <h2>APTRG GUI</h2>
+            </nav>
+            <br><br>
+            <div class="row">
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Accelero X</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Accelero Y</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Accelero Z</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Humidity</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="accx" style=" margin-left: 10px;"> Sensor 1</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="accy" style=" margin-left: 10px;"> Sensor 2</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="accz" style=" margin-left: 10px;"> Sensor 3</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="humidity" style=" margin-left: 10px;"> Sensor 7</h4></div>
+            </div>
+            <br><br>
+            <div class="row">
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Gyro X</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Gyro Y</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Gyro z</h3></div>
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp Temperature</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="gyrox" style=" margin-left: 10px;"> Sensor 4</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="gyroy" style=" margin-left: 10px;"> Sensor 5</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="gyroz" style=" margin-left: 10px;"> Sensor 6</h4></div>
+                <div class="col-sm-3" style="color:white; height: 100px; padding-top: 40px;"><h4 id="temperatur" style=" margin-left: 10px;"> Sensor 8</h4></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3" style="color:lightgreen;"><h3>&nbsp 3D Model</h3></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-3">
+                    <canvas id="c" style="width:600; height:400;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <h5 class="fontfotter">© 2021 Copyright <a href="https://www.instagram.com/aptrg"><font color="green">APTRG</font></a></h5>
+    </footer>
+</body>
+</html>
+
+    <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-database.js"></script>
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-firestore.js"></script>
+
+<script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+      apiKey: "AIzaSyBmBC5EwOP4WNUvXMv2N_B8nVSsTgxsAX0",
+      authDomain: "parsing-iot.firebaseapp.com",
+      databaseURL: "https://parsing-iot-default-rtdb.firebaseio.com",
+      projectId: "parsing-iot",
+      storageBucket: "parsing-iot.appspot.com",
+      messagingSenderId: "209756588039",
+      appId: "1:209756588039:web:9f50ab3324a4feb57f42a2"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    var accx = document.getElementById("accx");
+    var accy = document.getElementById("accy");
+    var accz = document.getElementById("accz");
+    var humidity = document.getElementById("humidity");
+
+    var gyrox = document.getElementById("gyrox");
+    var gyroy = document.getElementById("gyroy");
+    var gyroz = document.getElementById("gyroz");
+    var temperatur = document.getElementById("temperatur");
+
+
+    var accxref = firebase.database().ref().child("Accelero X/Value");
+    var accyref = firebase.database().ref().child("Accelero Y/Value");
+    var acczref = firebase.database().ref().child("Accelero Z/Value");
+    var humidityref = firebase.database().ref().child("Humidity/Value");
+
+    var gyroxref = firebase.database().ref().child("Gyro X/Value");
+    var gyroyref = firebase.database().ref().child("Gyro Y/Value");
+    var gyrozref = firebase.database().ref().child("Gyro Z/Value");
+    var temperaturref = firebase.database().ref().child("Temperatur/Value");
+
+    accxref.on('value', function(datasnapshot){
+        accx.innerText = datasnapshot.val();
+    });
+    accyref.on('value', function(datasnapshot){
+        accy.innerText = datasnapshot.val();
+    });
+    acczref.on('value', function(datasnapshot){
+        accz.innerText = datasnapshot.val();
+    });
+    humidityref.on('value', function(datasnapshot){
+        humidity.innerText = datasnapshot.val();
+    });
+
+    gyroxref.on('value', function(datasnapshot){
+        gyrox.innerText = datasnapshot.val();
+    });
+    gyroyref.on('value', function(datasnapshot){
+        gyroy.innerText = datasnapshot.val();
+    });
+    gyrozref.on('value', function(datasnapshot){
+        gyroz.innerText = datasnapshot.val();
+    });
+    temperaturref.on('value', function(datasnapshot){
+        temperatur.innerText = datasnapshot.val();
+    });
+</script>
+
+<script src="./threejs/build/three.js"></script>
+<script src="./threejs/build/OrbitControls.js"></script>
+<script src="./threejs/build/stats.js"></script>
+
+<script>
+    function main() {
+    const canvas = document.querySelector('#c');
+    const renderer = new THREE.WebGLRenderer({canvas, alpha: true});
+
+    const fov = 7;
+    const aspect = 2;  // the canvas default
+    const near = 0.1;
+    const far = 1000;
+    const camera = new THREE.PerspectiveCamera(75, aspect, near, far);
+    camera.position.z = 4;
+
+    //create the shape
+    const scene = new THREE.Scene();
+    renderer.setClearColor( 0x000000, 0.7 ); // the default
+
+    var geometry = new THREE.CylinderGeometry( 1, 1, 3, 32 );
+
+    //create a material color or image
+    var material = new THREE.MeshBasicMaterial( {color: 0x66ff99, wireframe:  true} );
+
+    function makeInstance(geometry) {
+
+    cylinder = new THREE.Mesh( geometry, material );
+    scene.add( cylinder );
+
+
+    return cylinder;
+    }
+
+    const cylinders = [
+    makeInstance(geometry),
+    ];
+
+    function resizeRendererToDisplaySize(renderer) {
+    const canvas = renderer.domElement;
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    const needResize = canvas.width !== width || canvas.height !== height;
+    if (needResize) {
+    renderer.setSize(width, height, false);
+    }
+    return needResize;
+    }
+
+    /*var material = new THREE.MeshBasicMaterial( { color: 0xFFFFFF, wireframe: true } );
+    var cube = new THREE.Mesh( geometry, material );
+    scene.add( cube );
+    */
+
+    //game logic
+
+    //draw scene
+    function render(){
+    if (resizeRendererToDisplaySize(renderer)) {
+    const canvas = renderer.domElement;
+    camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    camera.updateProjectionMatrix();
+
+    }
+
+    cylinders.forEach((cylinder) => {
+    cylinder.rotation.x = document.getElementById("gyrox").innerHTML / Math.PI *0.05;
+    cylinder.rotation.y = document.getElementById("gyroy").innerHTML / Math.PI *0.005;
+    cylinder.rotation.z = document.getElementById("gyroz").innerHTML / Math.PI *0.05;
+    });
+
+    renderer.render( scene,camera );
+    requestAnimationFrame(render);
+    }
+    requestAnimationFrame(render);
+    }
+    main();
+</script>
